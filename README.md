@@ -2,7 +2,7 @@
 
 Template for 2026 Socal Regional, based on KACTL.
 
-- [Current compiled handbook](kactl.pdf): 28 pages, including the cover and appendix.
+- [Current compiled handbook](kactl.pdf): 26 pages, including the cover and appendix.
 - [Windows build and editing instructions](README-Windows.md).
 - On the configured Windows machine, double-click `build-kactl.cmd` to rebuild, or open `kactl-terminal.cmd` and run `make kactl`.
 
