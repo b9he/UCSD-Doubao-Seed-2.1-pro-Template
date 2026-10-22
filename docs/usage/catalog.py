@@ -80,11 +80,10 @@ if(child!=-1)cout<<st->a.substr(st->l[child],
 add('Hashing.h','Input: string, unchanged. HashInterval stores prefix hashes; hashInterval(l,r) returns an H for [l,r); get() yields uint64_t.', '''string s="ababa";HashInterval h(s);
 cout<<(h.hashInterval(0,3)==h.hashInterval(2,5)); // 1
 cout<<h.hashInterval(0,3).get(); // numeric hash''')
-add('AhoCorasick.h','Input: patterns/text in A..Z (default first). Object stores the automaton. find returns the longest ending pattern ID per position; findAll returns starting IDs.', '''vec<string> pat={"A","BA"};AhoCorasick ac(pat);
-auto ending=ac.find("BA");cout<<ending[1]; // 1
-// findAll also mutates the object's backp links order.
-auto starting=ac.findAll(pat,"BA");
-for(int id:starting[0])cout<<id; // 1''')
+add('AhoCorasick.h','Input: nonempty a..z patterns with IDs below MAXN, then text. Global ac stores the automaton. MAXN must exceed total pattern length. insert all words, init once, match texts, build_tree once, dfs(0) once; cnt[end[i]] counts overlapping matches for ID i. Duplicate words share counts. match returns false unless optional early exit is enabled. clear before reuse and reinsert queried IDs.', '''ac.insert(1,"a");ac.insert(2,"aa");ac.init();
+ac.match("aaa");ac.build_tree();ac.dfs(0);
+cout<<ac.cnt[ac.end[1]]<<' '<<ac.cnt[ac.end[2]]; // 3 2
+ac.clear(); // next case''')
 add('Trie.h','Input: lowercase a..z words. insert changes the trie; find returns the number of equal inserted words (0 if absent).', '''Trie tr;tr.insert("abc");tr.insert("abc");
 cout<<tr.find("abc")<<' '<<tr.find("ab"); // 2 0''')
 add('Polynomial.h','Input: coefficients a[i] for x^i. Evaluation returns a scalar; diff/divroot overwrite a (nonempty polynomial; divroot assumes a known root).', '''Poly p{{2,-3,1}};cout<<p(3); // 2
@@ -455,7 +454,6 @@ def active_headers():
     return paths
 
 # Corrections found by reading the source interfaces.
-ENTRIES['AhoCorasick.h']['example']=ENTRIES['AhoCorasick.h']['example'].replace('// findAll also mutates the object\'s backp links order.\n','')
 ENTRIES['KnuthDP.h']['mode']='normal'
 ENTRIES['KnuthDP.h']['example']='''// Small recurrence example; restrict k using opt for Knuth.
 ll dp[3][3]={},pref[4]={0,1,3,6};

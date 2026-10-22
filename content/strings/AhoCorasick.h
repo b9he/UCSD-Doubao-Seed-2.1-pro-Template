@@ -1,90 +1,54 @@
 /**
- * Author: Simon Lindholm
- * Date: 2015-02-18
- * License: CC0
- * Source: marian's (TC) code
- * Description: Aho-Corasick automaton, used for multiple pattern matching.
- * Initialize with AhoCorasick ac(patterns); the automaton start node will be at index 0.
- * find(word) returns for each position the index of the longest word that ends there, or -1 if none.
- * findAll($-$, word) finds all words (up to $N \sqrt N$ many if no duplicate patterns)
- * that start at each position (shortest first).
- * Duplicate patterns are allowed; empty patterns are not.
- * To find the longest words that start at each position, reverse all input.
- * For large alphabets, split each symbol into chunks, with sentinel bits for symbol boundaries.
+ * Author: User-provided template
+ * Source: Personal template supplied in chat
+ * Description: Lowercase AC automaton with completed trie transitions and
+ * fail-tree frequency accumulation. Keep ac global; MAXN must exceed the sum
+ * of pattern lengths and every pattern ID. Duplicate patterns share a node.
+ * Insert all words before init; match counts visits without early exit.
+ * Build the fail tree and accumulate once, then cnt[end[i]] is word i's count.
+ * clear before reuse; insert every queried ID again. Deep fail trees need
+ * enough stack for recursive dfs. Uncomment the alert return for early exit
+ * only; it stops counting. init and build\_tree must each run once per case.
  * Usage:
- * vec<string>pat={"A", "BA"};AhoCorasick ac(pat);
- * auto ending=ac.find("BA");cout<<ending[1]; // 1
- * auto starting=ac.findAll(pat, "BA");
- * for(int id:starting[0])cout<<id; // 1
- * Time: construction takes $O(26N)$, where $N =$ sum of length of patterns.
- * find(x) is $O(N)$, where N = length of x. findAll is $O(NM)$.
- * Status: stress-tested
+ * ac.insert(1,"a");ac.insert(2,"aa");ac.init();
+ * ac.match("aaa");ac.build_tree();ac.dfs(0);
+ * cout<<ac.cnt[ac.end[1]]<<' '<<ac.cnt[ac.end[2]]; // 3 2
+ * ac.clear(); // next case
+ * Time: $O(26S+T+P)$ for total pattern length S, text length T, pattern count P.
+ * Memory: $O(26\cdot MAXN)$.
+ * Status: Tested against brute-force substring counts
  */
 #pragma once
-
-struct AhoCorasick {
-	enum {alpha=26, first='A'}; // change this!
-	struct Node {
-		// (nmatches is optional)
-		int back, next[alpha], start=-1, end=-1, nmatches=0;
-		Node(int v) { memset(next, v, sizeof(next)); }
-	};
-	vector<Node>N;
-	vi backp;
-	void insert(string&s, int j) {
-		assert(!s.empty());
-		int n=0;
-		for (char c:s) {
-			int&m=N[n].next[c-first];
-			if (m==-1) { n=m=sz(N); N.emplace_back(-1); }
-			else n=m;
-		}
-		if (N[n].end==-1) N[n].start=j;
-		backp.push_back(N[n].end);
-		N[n].end=j;
-		N[n].nmatches++;
+struct ACAM {
+	static const int MAXN=200005; // > total pattern length and pattern IDs
+	int trie[MAXN][26]{},fail[MAXN]{},cnt[MAXN]{},alert[MAXN]{},end[MAXN]{},tot=0;
+	vector<int>mp[MAXN];
+	ACAM(){clear();}
+	void clear(){
+		for(int i=0;i<=tot;i++){
+			memset(trie[i],0,sizeof(trie[i]));mp[i].clear();
+			fail[i]=alert[i]=cnt[i]=0;
+		}tot=0;
 	}
-	AhoCorasick(vector<string>&pat):N(1, -1) {
-		rep(i, 0, sz(pat)) insert(pat[i], i);
-		N[0].back=sz(N);
-		N.emplace_back(0);
-
-		queue<int>q;
-		for (q.push(0);!q.empty(); q.pop()) {
-			int n=q.front(), prev=N[n].back;
-			rep(i, 0, alpha) {
-				int&ed=N[n].next[i], y=N[prev].next[i];
-				if (ed==-1) ed=y;
-				else {
-					N[ed].back=y;
-					(N[ed].end==-1?N[ed].end:backp[N[ed].start])
-						=N[y].end;
-					N[ed].nmatches+=N[y].nmatches;
-					q.push(ed);
-				}
-			}
+	int insert(int i,const string&s){
+		int u=0;for(char c:s){int v=c-'a';
+			if(!trie[u][v]){trie[u][v]=++tot;}u=trie[u][v];
+		}alert[u]=1;end[i]=u;return u;
+	}
+	void init(){
+		queue<int>q;for(int i=0;i<26;i++)if(trie[0][i])q.push(trie[0][i]);
+		while(!q.empty()){
+			int u=q.front();q.pop();alert[u]|=alert[fail[u]];
+			for(int i=0;i<26;i++)if(trie[u][i]){
+				fail[trie[u][i]]=trie[fail[u]][i];q.push(trie[u][i]);
+			}else trie[u][i]=trie[fail[u]][i];
 		}
 	}
-	vi find(string word) {
-		int n=0;
-		vi res; // ll count = 0;
-		for (char c:word) {
-			n=N[n].next[c-first];
-			res.push_back(N[n].end);
-			// count+=N[n].nmatches;
-		}
-		return res;
+	bool match(const string&t){
+		int u=0;for(char c:t){u=trie[u][c-'a'];cnt[u]++;
+			// if(alert[u])return true; // early exit disables full counts
+		}return false;
 	}
-	vector<vi>findAll(vector<string>&pat, string word) {
-		vi r=find(word);
-		vector<vi>res(sz(word));
-		rep(i, 0, sz(word)) {
-			int ind=r[i];
-			while (ind!=-1) {
-				res[i-sz(pat[ind])+1].push_back(ind);
-				ind=backp[ind];
-			}
-		}
-		return res;
-	}
-};
+	void build_tree(){for(int i=1;i<=tot;i++)mp[fail[i]].push_back(i);}
+	void dfs(int u){for(int v:mp[u]){dfs(v);cnt[u]+=cnt[v];}}
+}ac;
