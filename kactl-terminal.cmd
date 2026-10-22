@@ -1,7 +1,9 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-set "PATH=%~dp0..\.tools\bin;%~dp0..\.tools\TinyTeX\bin\windows;D:\Program Files (x86)\Git\usr\bin;%PATH%"
+set "KACTL_TOOLS=%~dp0..\.tools"
+if not exist "%KACTL_TOOLS%\TinyTeX\bin\windows\pdflatex.exe" set "KACTL_TOOLS=D:\Template\kactl\.tools"
+set "PATH=%KACTL_TOOLS%\bin;%KACTL_TOOLS%\TinyTeX\bin\windows;D:\Program Files (x86)\Git\usr\bin;%PATH%"
 set "TEXINPUTS=.;content/tex/;"
 set "PYTHONUTF8=1"
 set "PYTHONIOENCODING=utf-8"

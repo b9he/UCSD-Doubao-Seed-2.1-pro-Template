@@ -11,9 +11,12 @@
  * Status: Layout preview; original implementation retained
  */
 #pragma once
+bool has_zero=false; // Nonempty subset with XOR 0.
 vec<ll>basis(30, 0); for (int i=0; i<n; i++) { ll x;
 	cin>>x; for (int j=29; j>=0; j--) { if ((x>>j)&1) {
 			if (!basis[j]) { basis[j]=x; break; } x^=basis[j]; }
-	} } ll max_xor=0; for (int j=29; j>=0; j--) {
+	}
+	if (!x) has_zero=true;
+} ll max_xor=0; for (int j=29; j>=0; j--) {
 	if ((max_xor^basis[j])>max_xor) { max_xor^=basis[j]; }
 } cout<<max_xor<<"\\n";

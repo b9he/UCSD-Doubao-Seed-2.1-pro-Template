@@ -3,6 +3,9 @@ param([switch]$Fast)
 $ErrorActionPreference = 'Stop'
 $projectRoot = $PSScriptRoot
 $toolsRoot = Join-Path (Split-Path $projectRoot -Parent) '.tools'
+if (-not (Test-Path -LiteralPath (Join-Path $toolsRoot 'TinyTeX\bin\windows\pdflatex.exe'))) {
+    $toolsRoot = 'D:\Template\kactl\.tools'
+}
 $texBin = Join-Path $toolsRoot 'TinyTeX\bin\windows'
 $pdfLatex = Join-Path $texBin 'pdflatex.exe'
 $python = 'D:\anaconda3\python.exe'

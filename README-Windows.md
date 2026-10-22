@@ -1,6 +1,6 @@
 # KACTL 本地修改与编译
 
-项目：`D:\Template\kactl\kactl`
+项目：`D:\Template\UCSD-Doubao-Seed-2.1-pro-Template`
 
 ## 最常用的方法
 
@@ -13,7 +13,7 @@
 ## 在 PowerShell 中编译
 
 ```powershell
-Set-Location 'D:\Template\kactl\kactl'
+Set-Location 'D:\Template\UCSD-Doubao-Seed-2.1-pro-Template'
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build-kactl.ps1
 ```
 
@@ -35,11 +35,11 @@ make kactl
 
 ## 修改和移除代码段
 
-- 改算法代码：编辑 `D:\Template\kactl\kactl\content` 对应分类下的 `.h` 或 `.cpp` 文件。
+- 改算法代码：编辑 `D:\Template\UCSD-Doubao-Seed-2.1-pro-Template\content` 对应分类下的 `.h` 或 `.cpp` 文件。
 - 控制 PDF 收录内容：编辑对应分类的 `chapter.tex`。
-- 修改章节顺序、队名或封面：编辑 `D:\Template\kactl\kactl\content\kactl.tex`。
+- 修改章节顺序、队名或封面：编辑 `D:\Template\UCSD-Doubao-Seed-2.1-pro-Template\content\kactl.tex`。
 
-例如，在 `D:\Template\kactl\kactl\content\data-structures\chapter.tex` 中，把
+例如，在 `D:\Template\UCSD-Doubao-Seed-2.1-pro-Template\content\data-structures\chapter.tex` 中，把
 
 ```tex
 \kactlimport{FenwickTree.h}
@@ -67,7 +67,7 @@ Python 预处理脚本只需要标准库；无需额外安装 pip 库。编译�
 
 ## 日志和补装 LaTeX 包
 
-编译失败时，查看 `D:\Template\kactl\kactl\build\kactl-pass1-console.log`、`kactl-pass2-console.log` 或 `test-session-console.log`。
+编译失败时，查看 `D:\Template\UCSD-Doubao-Seed-2.1-pro-Template\build\kactl-pass1-console.log`、`kactl-pass2-console.log` 或 `test-session-console.log`。
 
 以后增加新的 LaTeX 功能、遇到缺包提示时，在专用终端中执行：
 
@@ -75,7 +75,7 @@ Python 预处理脚本只需要标准库；无需额外安装 pip 库。编译�
 tlmgr install 包名
 ```
 
-首次配置前的主 PDF 备份：`D:\Template\kactl\kactl\build\kactl-before-windows-setup.pdf`。
+首次配置前的主 PDF 备份：`D:\Template\UCSD-Doubao-Seed-2.1-pro-Template\build\kactl-before-windows-setup.pdf`。
 
 ## 官方来源
 
