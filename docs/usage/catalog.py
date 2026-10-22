@@ -84,6 +84,8 @@ add('AhoCorasick.h','Input: nonempty a..z patterns with IDs below MAXN, then tex
 ac.match("aaa");ac.build_tree();ac.dfs(0);
 cout<<ac.cnt[ac.end[1]]<<' '<<ac.cnt[ac.end[2]]; // 3 2
 ac.clear(); // next case''')
+add('SAM.h','Input: a..z string shorter than MAXN. Global sam stores up to 2*MAXN states. Call init, insert every character, build_tree once, then dfs(0) once. cnt stores occurrence counts after DFS; its return is the maximum length*count over substrings occurring at least twice. Separator { requires 27 transition columns and loops. Keep sam global and allow enough stack for DFS.', '''string str="ababa";sam.init();for(char c:str)sam.insert(c);
+sam.build_tree();cout<<sam.dfs(0); // 6''')
 add('Trie.h','Input: lowercase a..z words. insert changes the trie; find returns the number of equal inserted words (0 if absent).', '''Trie tr;tr.insert("abc");tr.insert("abc");
 cout<<tr.find("abc")<<' '<<tr.find("ab"); // 2 0''')
 add('Polynomial.h','Input: coefficients a[i] for x^i. Evaluation returns a scalar; diff/divroot overwrite a (nonempty polynomial; divroot assumes a known root).', '''Poly p{{2,-3,1}};cout<<p(3); // 2
