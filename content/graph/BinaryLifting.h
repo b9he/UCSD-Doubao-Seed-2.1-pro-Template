@@ -1,42 +1,36 @@
 /**
- * Author: Johan Sannemo
- * Date: 2015-02-06
- * License: CC0
- * Source: Folklore
- * Description: Calculate power of two jumps in a tree,
- * to support fast upward jumps and LCAs.
- * Assumes the root node points to itself.
+ * Author: User-provided template
+ * Source: Personal template supplied in chat
+ * Description: One-based binary-lifting LCA for a tree. Set MAXN greater than n
+ * and choose LOGN with $2^{LOGN} \ge n$. Vertex 0 is the null ancestor.
+ * Add both directions to mp, then run DFS and preprocessing. Clear mp between
+ * test cases. Use HLD if memory is tight.
  * Usage:
- * vi parent={0, 0, 0, 1}, depth={0, 1, 1, 2};
- * auto table=treeJump(parent);
- * cout<<jmp(table, 3, 2)<<' '<<lca(table, depth, 3, 2); // 0 0
- * Time: construction $O(N \log N)$, queries $O(\log N)$
- * Status: Tested at Petrozavodsk, also stress-tested via LCA.cpp
+ * mp[1]={2,3};mp[2]={1,4};mp[3]={1};mp[4]={2};
+ * dfs(1,0,1);precompute(4);
+ * cout<<get_lca(4,3)<<' '<<get_lca(4,2); // 1 2
+ * Time: $O(N\log N)$ preprocessing, $O(\log N)$ per query.
+ * Memory: $O(MAXN\cdot LOGN)$.
+ * Status: Tested against an independent LCA implementation
  */
 #pragma once
-
-vector<vi>treeJump(vi&P){
-	int on=1, d=1;
-	while(on<sz(P)) on*=2, d++;
-	vector<vi>jmp(d, P);
-	rep(i, 1, d) rep(j, 0, sz(P))
-		jmp[i][j]=jmp[i-1][jmp[i-1][j]];
-	return jmp;
+const int MAXN=200005,LOGN=20;
+vector<int>mp[MAXN];
+int dep[MAXN],st[MAXN][LOGN+1];
+void dfs(int u,int p,int d){
+	dep[u]=d;st[u][0]=p;
+	for(int v:mp[u])if(v!=p)dfs(v,u,d+1);
 }
-
-int jmp(vector<vi>&tbl, int nod, int steps){
-	rep(i, 0, sz(tbl))
-		if(steps&(1<<i)) nod=tbl[i][nod];
-	return nod;
+void precompute(int n){
+	for(int j=1;j<=LOGN;j++)for(int i=1;i<=n;i++)
+		st[i][j]=st[st[i][j-1]][j-1];
 }
-
-int lca(vector<vi>&tbl, vi&depth, int a, int b) {
-	if (depth[a]<depth[b]) swap(a, b);
-	a=jmp(tbl, a, depth[a]-depth[b]);
-	if (a==b) return a;
-	for (int i=sz(tbl); i--;) {
-		int c=tbl[i][a], d=tbl[i][b];
-		if (c!=d) a=c, b=d;
-	}
-	return tbl[0][a];
+int get_lca(int u,int v){
+	if(dep[u]<dep[v])swap(u,v);
+	for(int i=LOGN;i>=0;i--)
+		if(dep[u]-(1<<i)>=dep[v])u=st[u][i];
+	if(u==v)return u;
+	for(int i=LOGN;i>=0;i--)if(st[u][i]!=st[v][i])
+		u=st[u][i],v=st[v][i];
+	return st[u][0];
 }

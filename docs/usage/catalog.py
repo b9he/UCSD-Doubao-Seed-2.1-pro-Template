@@ -268,9 +268,9 @@ rep(i,0,3)rep(j,0,3)
  complement[i][j]=(i!=j&&!g[i][j]);
 Maxclique solver(complement);auto answer=solver.maxClique();
 cout<<answer.size(); // 2''',setup='#include "content/graph/MaximumClique.h"')
-add('BinaryLifting.h','Input: parent array (root points to itself) and depths, read-only. treeJump returns the table; jmp returns ancestor, lca returns a vertex ID.', '''vi parent={0,0,0,1},depth={0,1,1,2};
-auto table=treeJump(parent);
-cout<<jmp(table,3,2)<<' '<<lca(table,depth,3,2); // 0 0''')
+add('BinaryLifting.h','Input: one-based undirected tree in mp. Set MAXN>n and 2^LOGN>=n. dfs(root,0,1) fills dep and immediate parents; precompute(n) builds st; get_lca returns a vertex ID. Clear mp between cases; use HLD if memory is tight.', '''mp[1]={2,3};mp[2]={1,4};mp[3]={1};mp[4]={2};
+dfs(1,0,1);precompute(4);
+cout<<get_lca(4,3)<<' '<<get_lca(4,2); // 1 2''')
 add('LCA.h','Input: nonempty rooted tree adjacency, root=0, unchanged. Construction fills object tables; lca(u,v) returns a vertex ID.', '''vec<vi> g={{1,2},{0,3},{0},{1}};LCA tree(g);
 cout<<tree.lca(3,2); // 0''')
 add('CompressTree.h','Input: LCA object and nonempty vertex subset, read-only. Returns {parent index,original vertex ID}; first item {0,root ID}.', '''vec<vi> g={{1,2},{0},{0}};LCA lca(g);

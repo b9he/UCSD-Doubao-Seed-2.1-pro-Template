@@ -45,13 +45,6 @@ struct LCA {
 }
 
 
-void getPars(vector<vi> &tree, int cur, int p, int d, vector<int> &par, vector<int> &depth) {
-	par[cur] = p;
-	depth[cur] = d;
-	for(auto i: tree[cur]) if (i != p) {
-		getPars(tree, i, cur, d+1, par, depth);
-	}
-}
 void test_n(int n, int num) {
 	for (int out=0; out<num; out++) {
 		auto graph = genRandomTree(n);
@@ -63,14 +56,17 @@ void test_n(int n, int num) {
 			oldTree[i.first].push_back({i.second, 1});
 			oldTree[i.second].push_back({i.first, 1});
 		}
-		vector<int> par(n), depth(n);
-		getPars(tree, 0, 0, 0, par, depth);
-		vector<vi> tbl = treeJump(par);
+		for (int v=0; v<n; ++v) {
+			mp[v+1].clear();
+			for (int u:tree[v]) mp[v+1].push_back(u+1);
+		}
+		dfs(1, 0, 1);
+		precompute(n);
 		LCA new_lca(tree);
 		old::LCA old_lca(oldTree);
 		for (int i=0; i<100; i++) {
 			int a = rand()%n, b = rand()%n;
-			int binLca = lca(tbl, depth, a, b);
+			int binLca = get_lca(a+1, b+1)-1;
 			int newLca = new_lca.lca(a,b);
 			int oldLca = old_lca.query(a,b);
 			assert(oldLca == newLca);
