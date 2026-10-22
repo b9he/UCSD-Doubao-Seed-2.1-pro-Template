@@ -1,0 +1,28 @@
+/**
+ * Author: Per Austrin, Ulf Lundstrom
+ * Date: 2009-04-09
+ * License: CC0
+ * Source:
+ * Description:\\
+\begin{minipage}{75mm}
+ Apply the linear transformation (translation, rotation and scaling) which takes line p0-p1 to line q0-q1 to point r.
+\end{minipage}
+\begin{minipage}{15mm}
+\vspace{-8mm}
+\includegraphics[width=\textwidth]{content/geometry/linearTransformation}
+\vspace{-2mm}
+\end{minipage}
+ * Usage:
+ * P out=linearTransformation(P(0, 0), P(1, 0),
+ *  P(2, 3), P(4, 3), P(0, 1));cout<<out; // (2,5)
+ * Status: not tested
+ */
+#pragma once
+
+#include "Point.h"
+
+typedef Point<double>P;
+P linearTransformation(P p0, P p1, P q0, P q1, P r) {
+	P dp=p1-p0, dq=q1-q0, num(dp.cross(dq), dp.dot(dq));
+	return q0+P((r-p0).cross(num), (r-p0).dot(num))/dp.dist2();
+}

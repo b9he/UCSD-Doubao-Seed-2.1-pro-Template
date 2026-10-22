@@ -1,0 +1,79 @@
+\subsection{Euler's totient}
+For $n\ge1$, $\phi(n)$ counts $1\le a\le n$ with $\gcd(a,n)=1$.
+For prime $p$, $k\ge1$, distinct prime divisors $p_i$, and $\gcd(m,n)=1$:
+\[
+\begin{gathered}
+\phi(1)=1,\qquad \phi(p^k)=(p-1)p^{k-1},\\
+\phi(mn)=\phi(m)\phi(n),\qquad
+\phi(n)=n\prod_{p_i\mid n}\left(1-\frac1{p_i}\right).
+\end{gathered}
+\]
+
+\subsection{Fermat and Euler}
+For prime $p$, $a^p\equiv a\pmod p$ for every integer $a$;
+if $p\nmid a$, $a^{p-1}\equiv1\pmod p$.
+For $\gcd(a,m)=1$, $a^{\phi(m)}\equiv1\pmod m$.
+For $a\ge0$, $m\ge2$, $b\ge0$, put $t=\phi(m)$:
+\[
+a^b\equiv
+\begin{cases}
+a^{b\bmod t},&\gcd(a,m)=1,\\
+a^b,&\gcd(a,m)>1,\ b<t,\\
+a^{b\bmod t+t},&\gcd(a,m)>1,\ b\ge t
+\end{cases}\pmod m.
+\]
+
+\subsection{Wilson}
+For $n>1$, $n$ is prime iff $(n-1)!\equiv-1\pmod n$.
+For composite $n>4$, $(n-1)!\equiv0\pmod n$.
+
+\subsection{Sprague--Grundy}
+For a finite impartial game under normal play (no moves loses),
+with no cycles, let $\operatorname{next}(x)$ be the possible next states.
+The mex is the smallest nonnegative integer absent from a set.
+\[
+SG(x)=\operatorname{mex}\{SG(y):y\in\operatorname{next}(x)\}.
+\]
+$SG(x)=0$ iff $x$ is losing. For independent games:
+\[
+SG(G_1+\cdots+G_k)=SG(G_1)\mathbin{\oplus}\cdots\mathbin{\oplus}SG(G_k).
+\]
+
+\subsection{Floor-division blocks}
+For $1\le l\le n$, set $q=\lfloor n/l\rfloor$ and
+$r=\lfloor n/q\rfloor$. Then $\lfloor n/i\rfloor=q$ for all $i\in[l,r]$.
+Advance $l=r+1$; there are at most $2\lfloor\sqrt n\rfloor$ blocks.
+With $F(x)=\sum_{i=1}^x f(i)$:
+\[
+\sum_{i=1}^n f(i)g(\lfloor n/i\rfloor)
+=\sum_{\text{blocks }[l,r]}(F(r)-F(l-1))g(q).
+\]
+
+\subsection{Reordering sums}
+For $h=\min(n,m)$ and positive $n,m$:
+\[
+\begin{aligned}
+&\sum_{i=1}^n\sum_{j=1}^m\sum_{d\mid\gcd(i,j)} f(d)\\
+&\qquad=\sum_{d=1}^{h}f(d)\left\lfloor\frac nd\right\rfloor
+\left\lfloor\frac md\right\rfloor.
+\end{aligned}
+\]
+For $k\ge1$, writing $H=\min(\lfloor n/k\rfloor,\lfloor m/k\rfloor)$:
+\[
+\#\{(i,j):\gcd(i,j)=k\}
+=\sum_{d=1}^{H}\mu(d)\left\lfloor\frac n{kd}\right\rfloor
+\left\lfloor\frac m{kd}\right\rfloor,
+\]
+where $1\le i\le n$, $1\le j\le m$.
+\[
+\sum_{i=1}^n\sum_{j=1}^m A_iB_j
+=\left(\sum_{i=1}^n A_i\right)\left(\sum_{j=1}^m B_j\right).
+\]
+
+\subsection{Pick's theorem}
+For a simple polygon with integer-coordinate vertices, let $I$ be
+the number of interior lattice points and $B$ the number on its boundary.
+\[
+A=I+\frac B2-1,\qquad
+B=\sum_{\text{edges }(dx,dy)}\gcd(|dx|,|dy|).
+\]

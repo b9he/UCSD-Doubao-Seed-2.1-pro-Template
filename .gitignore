@@ -1,0 +1,15 @@
+/build/
+*.aux
+*.log
+*.gch
+a.out
+header.tmp
+.vscode
+
+# Local build backups, previews and Python caches
+/build-before-*/
+/tmp/
+/output/
+__pycache__/
+*.py[cod]
+.DS_Store

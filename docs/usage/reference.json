@@ -1,0 +1,26 @@
+{
+  "template.cpp": {
+    "io": "Common GNU C++17 preamble. Put input and output inside main; define ll/vec before copying templates that use them.",
+    "example": "int n;cin>>n; // read input, e.g. 5\ncout<<n*n; // output 25"
+  },
+  ".bashrc": {
+    "io": "Shell configuration fragment, sourced by Bash. Commands affect the shell or compile/run a file; terminal output contains diagnostics/program output.",
+    "example": "source ~/.bashrc\n# Run the aliases/functions shown below in that shell."
+  },
+  ".vimrc": {
+    "io": "Vim configuration fragment. Sourcing changes editor settings/mappings, not the C++ program output.",
+    "example": "# In Vim, source the file with :source ~/.vimrc\n# Use the mappings shown below while editing a C++ file."
+  },
+  "hash.sh": {
+    "io": "Shell filter: C++ source arrives on stdin; stdout is its normalized short hash. This is separate from algorithm inputs/outputs.",
+    "example": "sh content/contest/hash.sh < solution.cpp"
+  },
+  "troubleshoot.txt": {
+    "io": "Manual debugging checklist, not executable code. Review it against the current program and failing input.",
+    "example": "# Compare expected/actual output on a minimal failing case.\n# Check the listed overflow, bounds and initialization cases."
+  },
+  "techniques.txt": {
+    "io": "Technique index, not an executable template. Choose the relevant technique, then use its algorithm template.",
+    "example": "# For offline connectivity with undo, use RollbackUF:\nRollbackUF uf(3);int t=uf.time();uf.join(0,1);\ncout<<uf.size(0); // 2\nuf.rollback(t);cout<<uf.size(0); // 1"
+  }
+}
