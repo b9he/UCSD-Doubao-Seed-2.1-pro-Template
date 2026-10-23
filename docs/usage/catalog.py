@@ -187,6 +187,7 @@ for(int v:bfs.get_path(2))cout<<v; // 012''')
 add('BellmanFord.h','Input/output: nodes is overwritten with dist/prev; edges is sorted in place. inf=unreachable, -inf=reachable from a negative cycle.', '''vec<Node> nodes(3);vec<Ed> edges={{0,1,2},{1,2,-1}};
 bellmanFord(nodes,edges,0);
 cout<<nodes[2].dist<<' '<<nodes[2].prev; // 1 1''')
+add('DifferenceConstraints.h','Difference-constraints modeling recipe using BellmanFord.h. Integer strict inequalities can subtract one. Keep reference z separate from reachability super-source S, connect S to all variables and z with zero edges, and start with fresh Node objects. Any dist==-inf means a negative cycle and infeasible constraints; otherwise dist[v]-dist[z] satisfies values relative to z=0. The included example uses b in [3,4], z=0,b=1,S=2. Edge weights use int. No cycle-vertex recovery is provided.','vec<Node>nodes(3);\nvec<Ed>edges={{1,0,-3},{0,1,4},{2,0,0},{2,1,0}};\nbellmanFord(nodes,edges,2);\nbool ok=true;for(auto&v:nodes)if(v.dist==-inf)ok=false;\ncout<<ok; // 1: constraints are feasible\nif(ok)cout<<nodes[1].dist-nodes[0].dist; // 3')
 add('FloydWarshall.h','Input/output: m is the distance matrix, overwritten with shortest distances. Initialize missing arcs to inf; -inf marks negative-cycle reachability.', '''vec<vec<ll>> m={{0,2,inf},{inf,0,3},{inf,inf,0}};
 floydWarshall(m);cout<<m[0][2]; // 5''')
 add('TopoSort.h','Input: directed adjacency list, unchanged. Returns a topological order; size<n means a cycle (only an acyclic prefix was returned).', '''vec<vi> g={{1},{2},{}};auto order=topoSort(g);
@@ -206,16 +207,10 @@ cout<<value<<' '<<match[0]<<' '<<match[1]; // 3 0 1''')
 add('GeneralMatching.h','Input: N and undirected edge pairs, read-only. Returns matched vertex pairs; randomized and dependent on modular matrix inversion.', '''vec<pii> edges={{0,1},{2,3}};
 auto pairs=generalMatching(4,edges);
 cout<<pairs.size(); // 2; pairs may be in either order''')
-add('SCC.h','Input: directed adjacency g, unchanged. Callback receives each component; global comp[v] and ncomps are also filled.', '''vec<vi> g={{1},{0,2},{}};vec<vi> parts;
-scc(g,[&](vi& p){parts.push_back(p);});
-cout<<ncomps<<' '<<(comp[0]==comp[1]); // 2 1''')
-add('BiconnectedComponents.h','Input: global ed[u]={neighbor,unique edge ID} in both directions. Callback receives component edge IDs; bridges/isolated vertices are not callback components. Reset Time/st for reuse.', '''ed={{{1,0},{2,2}},{{0,0},{2,1}},{{1,1},{0,2}}};
-Time=0;st.clear();vec<vi> blocks;
-bicomps([&](vi e){blocks.push_back(e);});
-cout<<blocks[0].size(); // 3 edges''')
-add('2sat.h','Input: variable IDs; ~i denotes negation. either/setValue add clauses. solve returns feasibility and overwrites values[i] with 0/1 on success.', '''TwoSat sat(2);sat.either(0,1);sat.setValue(~0);
-if(sat.solve())cout<<sat.values[0]<<' '<<sat.values[1];
-// 0 1''')
+add('SCC.h','Input: one-based directed graph in mp, n<MAXN. Run tarjan(i) for every unvisited vertex. cc is the number of SCCs; belong[u] is the 1-based component ID. IDs decrease along edges between SCCs, so cc..1 is a topological order. scc vertex lists are only filled after uncommenting both push statements. Clear mp/scc and zero dfn/low/belong/timer/cc/top between cases. Independent global snippet.',"mp[1]={2};mp[2]={1,3};mp[3]={};\nfor(int i=1;i<=3;i++)if(!dfn[i])tarjan(i);\ncout<<cc<<' '<<(belong[1]==belong[2]); // 2 1")
+add('EBCC.h','One-based undirected graph using paired directed arcs. Add each edge as consecutive add_edge(u,v), add_edge(v,u), preserving xor-1 reverse IDs. MAXN>n; MAXM includes both arc directions and reserved slots. Run tarjan(i,0) for unvisited vertices. bcc stores component vertices, belong maps vertices to components, cut marks both arcs of each bridge, and cc counts components. Isolated vertices are included. The commented bridge-only loop builds the component forest in mp. Reset all state between cases; independent snippet.',"add_edge(1,2);add_edge(2,1);\nadd_edge(2,3);add_edge(3,2);\nfor(int i=1;i<=4;i++)if(!dfn[i])tarjan(i,0);\ncout<<cc<<' '<<cut[2]; // 4 1, vertex 4 is isolated")
+add('VBCC.h','One-based undirected graph; add both directions and ignore self-loops. MAXN>n; MAXM includes both directions and reserved slots. Run tarjan(i,true) for unvisited roots, then append isolated vertices using the supplied loop. vbcc stores vertex blocks; cut marks articulation vertices and cutcnt counts them. Root vertices are popped on return. mp reserves an optional block-cut forest. Reset all state between cases; independent snippet.',"add_edge(1,2);add_edge(2,1);\nadd_edge(2,3);add_edge(3,2);\nfor(int i=1;i<=4;i++)if(!dfn[i])tarjan(i,true);\nfor(int i=1;i<=4;i++)if(!head[i])vbcc[++cc].push_back(i);\ncout<<cc<<' '<<cutcnt; // 3 1, vertex 4 is isolated")
+add('2sat.h','Comment-only 2-SAT modeling recipe, not a TwoSat class. Build the implication graph with two complementary literals per variable and run Tarjan from SCC.h. Equal SCC IDs for complementary literals mean UNSAT; otherwise choose the literal with the smaller SCC ID. Threshold encodings must include monotonicity implications between consecutive ordered thresholds. Reserve MAXN for every literal vertex.','// Build the implication graph, then use tarjan(i) from SCC.h.')
 add('EulerWalk.h','Input: adjacency of {neighbor,edge ID}, edge count and start, read-only. Undirected reverse arcs share an ID. Returns vertex walk or empty if invalid.', '''vec<vec<pii>> g={{{1,0}},{{0,0}}};
 auto walk=eulerWalk(g,1,0);
 for(int v:walk)cout<<v; // 01''')

@@ -1,41 +1,40 @@
 /**
- * Author: Lukas Polacek
- * Date: 2009-10-28
- * License: CC0
- * Source: Czech graph algorithms book, by Demel. (Tarjan's algorithm)
- * Description: Finds strongly connected components in a
- * directed graph. If vertices $u, v$ belong to the same component,
- * we can reach $u$ from $v$ and vice versa.
+ * Author: User-provided template
+ * Source: Personal template supplied in chat
+ * Description: Tarjan SCC for a one-based directed graph in mp. Set MAXN
+ * greater than n. cc is the component count and belong[u] is its 1-based ID.
+ * For an edge between components, $belong[u]>belong[v]$; component IDs
+ * cc down to 1 give a topological order. Uncomment the two push statements
+ * to collect vertices in scc. Before another case, clear mp and scc, zero
+ * dfn/low/belong, and reset timer, cc, top. This is an independent snippet.
  * Usage:
- * vec<vi>g={{1}, {0, 2}, {}};vec<vi>parts;
- * scc(g, [&](vi&p){parts.push_back(p);});
- * cout<<ncomps<<' '<<(comp[0]==comp[1]); // 2 1
- * Time: O(E + V)
- * Status: Bruteforce-tested for N <= 5
+ * mp[1]={2};mp[2]={1,3};mp[3]={};
+ * for(int i=1;i<=3;i++)if(!dfn[i])tarjan(i);
+ * cout<<cc<<' '<<(belong[1]==belong[2]); // 2 1
+ * Time: $O(V+E)$.
+ * Memory: $O(MAXN+E)$.
+ * Status: User-provided template; compile-checked
  */
 #pragma once
-
-vi val, comp, z, cont;
-int Time, ncomps;
-template<class G, class F>int dfs(int j, G&g, F&f) {
-	int low=val[j]=++Time, x; z.push_back(j);
-	for (auto e:g[j]) if (comp[e]<0)
-		low=min(low, val[e]?:dfs(e, g, f));
-
-	if (low==val[j]) {
-		do {
-			x=z.back(); z.pop_back();
-			comp[x]=ncomps;
-			cont.push_back(x);
-		} while (x!=j);
-		f(cont); cont.clear();
-		ncomps++;
+const int MAXN=10005;
+vector<int>mp[MAXN],scc[MAXN];
+int dfn[MAXN],low[MAXN],belong[MAXN],stk[MAXN];
+int timer=0,cc=0,top=0;
+void tarjan(int i){
+	dfn[i]=low[i]=++timer;stk[++top]=i;
+	for(int v:mp[i]){
+		if(belong[v])continue;
+		if(dfn[v])low[i]=min(low[i],dfn[v]);
+		else{tarjan(v);low[i]=min(low[i],low[v]);}
 	}
-	return val[j]=low;
+	if(low[i]==dfn[i]){
+		cc++;while(stk[top]!=i){
+			// scc[cc].push_back(stk[top]);
+			belong[stk[top--]]=cc;
+		}
+		// scc[cc].push_back(i);
+		belong[stk[top--]]=cc;
+	}
 }
-template<class G, class F>void scc(G&g, F f) {
-	int n=sz(g);
-	val.assign(n, 0); comp.assign(n, -1);
-	Time=ncomps=0;
-	rep(i, 0, n) if (comp[i]<0) dfs(i, g, f);
-}
+//for(int i=1;i<=n;i++)if(!dfn[i])tarjan(i);
+//强连通分量的逆序就是拓扑序

@@ -1,74 +1,21 @@
 /**
- * Author: Emil Lenngren, Simon Lindholm
- * Date: 2011-11-29
- * License: CC0
- * Source: folklore
- * Description: Calculates a valid assignment to boolean variables a, b, c,... to a 2-SAT problem,
- * so that an expression of the type $(a||b)\&\&(!a||c)\&\&(d||!b)\&\&...$
- * becomes true, or reports that it is unsatisfiable.
- * Negated variables are represented by bit-inversions (\texttt{\tilde{}x}).
+ * Author: User-provided notes
+ * Source: Personal modeling notes supplied in chat
+ * Description: 2-SAT modeling recipe; use SCC.h for Tarjan after building
+ * the implication graph. There is no TwoSat class in this snippet.
+ * For threshold encodings, also add monotonicity implications between
+ * consecutive ordered thresholds. Reserve space for all literal vertices.
  * Usage:
- * TwoSat sat(2);sat.either(0, 1);sat.setValue(~0);
- * if(sat.solve())cout<<sat.values[0]<<' '<<sat.values[1];
- * // 0 1
- * Time: O(N+E), where N is the number of boolean variables, and E is the number of clauses.
- * Status: stress-tested
+ * // Build the implication graph, then use tarjan(i) from SCC.h.
+ * Time: $O(V+E)$ after building the implication graph.
+ * Status: Modeling notes
  */
 #pragma once
-
-struct TwoSat {
-	int N;
-	vector<vi>gr;
-	vi values; // 0 = false, 1 = true
-
-	TwoSat(int n=0):N(n), gr(2*n) {}
-
-	int addVar() { // (optional)
-		gr.emplace_back();
-		gr.emplace_back();
-		return N++;
-	}
-
-	void either(int f, int j) {
-		f=max(2*f, -1-2*f);
-		j=max(2*j, -1-2*j);
-		gr[f].push_back(j^1);
-		gr[j].push_back(f^1);
-	}
-	void setValue(int x) { either(x, x); }
-
-	void atMostOne(const vi&li) { // (optional)
-		if (sz(li)<=1) return;
-		int cur=~li[0];
-		rep(i, 2, sz(li)) {
-			int next=addVar();
-			either(cur, ~li[i]);
-			either(cur, next);
-			either(~li[i], next);
-			cur=~next;
-		}
-		either(cur, ~li[1]);
-	}
-
-	vi val, comp, z; int time=0;
-	int dfs(int i) {
-		int low=val[i]=++time, x; z.push_back(i);
-		for(int e:gr[i]) if (!comp[e])
-			low=min(low, val[e]?:dfs(e));
-		if (low==val[i]) do {
-			x=z.back(); z.pop_back();
-			comp[x]=low;
-			if (values[x>>1]==-1)
-				values[x>>1]=x&1;
-		} while (x!=i);
-		return val[i]=low;
-	}
-
-	bool solve() {
-		values.assign(N, -1);
-		val.assign(2*N, 0); comp=val;
-		rep(i, 0, 2*N) if (!comp[i]) dfs(i);
-		rep(i, 0, N) if (comp[2*i]==comp[2*i+1]) return 0;
-		return 1;
-	}
-};
+// 2-SAT
+// 假设每个变量只有a和b两种取值,把每个点拆成2份
+// x==a 或 y==b 转化为 !xa -> yb 和 !yb -> xa
+// x==a 转化为 !xa -> xa
+// 在图上跑tarjan scc
+// 如果某个变量的2个点在同个scc内,没有解
+// 否则,变量的取值由拓扑序靠后(scc编号靠前)的点决定
+// 数值问题可以转化成x>=k和x<k,结束时逆序遍历所有的k,第一个x>=k拓扑序靠后的点即为答案

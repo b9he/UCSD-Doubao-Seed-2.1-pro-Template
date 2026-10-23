@@ -3,6 +3,10 @@
 \section{Fundamentals}
 	\kactlimport{ZeroOneBFS.h}
 	\kactlimport{BellmanFord.h}
+	\begingroup
+	\input{content/tex/FlowComments.tex}
+	\kactlimport{DifferenceConstraints.h}
+	\endgroup
 	% \kactlimport{FloydWarshall.h}
 	% \kactlimport{TopoSort.h}
 
@@ -21,9 +25,14 @@
 	\kactlimport{GeneralMatching.h}
 
 \section{DFS algorithms}
+	\begingroup
+	\input{content/tex/FlowComments.tex}
 	\kactlimport{SCC.h}
-	\kactlimport{BiconnectedComponents.h}
+	% \kactlimport{BiconnectedComponents.h}
+	\kactlimport{EBCC.h}
+	\kactlimport{VBCC.h}
 	\kactlimport{2sat.h}
+	\endgroup
 	\kactlimport{EulerWalk.h}
 
 \section{Coloring}

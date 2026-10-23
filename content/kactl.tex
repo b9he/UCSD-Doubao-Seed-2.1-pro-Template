@@ -10,6 +10,8 @@
 
 \begin{document}
 	\maketeampage
+	\begingroup
+	\input{content/tex/CompactLayout.tex}
 	% Small KACTL header on the first page:
 	% \maketitle{``One Last Time'' Edition}{\today}
 	\begin{multicols*}{3}
@@ -30,6 +32,7 @@
 	\kactlchapter{various}
 	\kactlchapter{reference}
 	\end{multicols*}
+	\endgroup
 	\clearpage
 	\begin{multicols*}{3}
 	\kactlchapter{appendix}

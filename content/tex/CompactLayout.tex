@@ -1,0 +1,30 @@
+% Compact only the handbook through Reference 11.4; preserve all font sizes.
+% Keep the cover and Techniques appendix in their original layout.
+\linespread{0.96}\selectfont
+\setlength{\parskip}{1.5pt plus .3pt}
+\lstset{aboveskip=2pt,belowskip=1pt}
+
+% Keep the generated list of filenames on one line, between the side labels.
+\newsavebox{\CompactHeaderBox}
+\makeatletter
+\chead{%
+  \immediate\write18{python3 content/tex/preprocessor.py --print-header "\splitbotmarks\hdrmark|\botmarks\hdrmark" -o \@builddir/header2.tmp}%
+  \sbox{\CompactHeaderBox}{\input{\@builddir/header2.tmp}}%
+  \ifdim\wd\CompactHeaderBox>.90\textwidth
+    \resizebox{.90\textwidth}{!}{\usebox{\CompactHeaderBox}}%
+  \else
+    \usebox{\CompactHeaderBox}%
+  \fi
+}
+% The original -5pt caption pull-up assumes a larger paragraph gap.
+% Leave enough separation for the line-count label after the Usage block.
+\long\def\@makecaption#1#2{%
+  \vspace{-3pt}%
+  \ifthenelse{\boolean{hasdescription}}{\codeheader{Description}{\@defdescription}\nobreak}{}%
+  \ifthenelse{\boolean{hasusage}}{\codeheader{Usage}{\@defusage}}{}%
+  \ifthenelse{\boolean{hasmemory}}{\codeheader{Memory}{\@defmemory}}{}%
+  \ifthenelse{\boolean{hastime}}{\codeheader{Time}{\@deftime}}{}%
+  \ifthenelse{\boolean{hasleftcaption}}{\vspace{0pt}}{\vspace{-2pt}}%
+  \tiny\texttt{\@leftcaption}\hfill\@rightcaption
+}
+\makeatother
