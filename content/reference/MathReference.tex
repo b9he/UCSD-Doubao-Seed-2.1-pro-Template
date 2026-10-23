@@ -9,6 +9,25 @@ For prime $p$, $k\ge1$, distinct prime divisors $p_i$, and $\gcd(m,n)=1$:
 \end{gathered}
 \]
 
+\subsection{Dirichlet convolution and M\"obius}
+Let $\mu$ be the M\"obius function and $[P]$ be 1 when $P$ holds, else 0.
+For $n\ge1$, write $\mathbf1(n)=1$, $\mathrm{id}(n)=n$,
+$\varepsilon(n)=[n=1]$, and define
+\[
+(f*g)(n)=\sum_{d\mid n}f(d)g(n/d).
+\]
+\[
+\begin{aligned}
+\sum_{d\mid n}\phi(d)&=n,&\phi*\mathbf1&=\mathrm{id},\\
+\sum_{d\mid n}\mu(d)&=[n=1],&\mu*\mathbf1&=\varepsilon,\\
+\sum_{d\mid n}\mu(d)\frac nd&=\phi(n),&\mu*\mathrm{id}&=\phi.
+\end{aligned}
+\]
+For positive $i,j$:
+\[
+[\gcd(i,j)=1]=\sum_{d\mid\gcd(i,j)}\mu(d).
+\]
+
 \subsection{Fermat and Euler}
 For prime $p$, $a^p\equiv a\pmod p$ for every integer $a$;
 if $p\nmid a$, $a^{p-1}\equiv1\pmod p$.
@@ -54,17 +73,22 @@ For $h=\min(n,m)$ and positive $n,m$:
 \[
 \begin{aligned}
 &\sum_{i=1}^n\sum_{j=1}^m\sum_{d\mid\gcd(i,j)} f(d)\\
+&\qquad=\sum_{i=1}^n\sum_{j=1}^m\sum_{d=1}^{h}[d\mid i][d\mid j]f(d)\\
 &\qquad=\sum_{d=1}^{h}f(d)\left\lfloor\frac nd\right\rfloor
 \left\lfloor\frac md\right\rfloor.
 \end{aligned}
 \]
-For $k\ge1$, writing $H=\min(\lfloor n/k\rfloor,\lfloor m/k\rfloor)$:
+For $k\ge1$, put $N=\lfloor n/k\rfloor$, $M=\lfloor m/k\rfloor$,
+and $H=\min(N,M)$. Counting pairs with fixed gcd:
 \[
-\#\{(i,j):\gcd(i,j)=k\}
-=\sum_{d=1}^{H}\mu(d)\left\lfloor\frac n{kd}\right\rfloor
-\left\lfloor\frac m{kd}\right\rfloor,
+\begin{aligned}
+&\sum_{i=1}^n\sum_{j=1}^m[\gcd(i,j)=k]\\
+&\qquad=\sum_{a=1}^{N}\sum_{b=1}^{M}[\gcd(ka,kb)=k]\\
+&\qquad=\sum_{a=1}^{N}\sum_{b=1}^{M}[\gcd(a,b)=1]\\
+&\qquad=\sum_{d=1}^{H}\mu(d)\left\lfloor\frac n{kd}\right\rfloor
+\left\lfloor\frac m{kd}\right\rfloor.
+\end{aligned}
 \]
-where $1\le i\le n$, $1\le j\le m$.
 \[
 \sum_{i=1}^n\sum_{j=1}^m A_iB_j
 =\left(\sum_{i=1}^n A_i\right)\left(\sum_{j=1}^m B_j\right).

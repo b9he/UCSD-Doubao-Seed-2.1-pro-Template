@@ -284,6 +284,10 @@ add('HLD.h','Input: nonempty undirected tree, copied; root 0. Path updates mutat
 hld.modifyPath(0,2,1000000000); // initialize to zero
 hld.modifyPath(1,2,5);
 cout<<hld.queryPath(0,2)<<' '<<hld.querySubtree(1); // 5 5''')
+add('DSUOnTree.h','Input: one-based undirected tree in mp and colors in val. Set MAXN>n and compress colors into [0,MAXN). dfs1 computes sizes/heavy children; dfs_dsu fills ans[u] with the distinct-color count in each subtree. Use keep=false at the root to clear counters, or reset color/diff before reuse; clear mp between cases. Independent snippet with global names.', '''mp[1]={2,3};mp[2]={1};mp[3]={1};
+val[1]=val[2]=1;val[3]=2;
+dfs1(1,0);dfs_dsu(1,0,false);
+cout<<ans[1]<<' '<<ans[2]; // 2 1''')
 add('LinkCutTree.h','Input: vertex count then link/cut operations, mutating the forest. connected returns a boolean; link requires disconnected endpoints and cut requires an existing edge.', '''LinkCut forest(3);forest.link(0,1);forest.link(1,2);
 cout<<forest.connected(0,2); // 1
 forest.cut(1,2);cout<<forest.connected(0,2); // 0''')
