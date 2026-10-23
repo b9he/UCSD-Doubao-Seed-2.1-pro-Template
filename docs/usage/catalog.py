@@ -402,6 +402,9 @@ cout<<pos<<' '<<f(pos); // 3 0''')
 add('LIS.h','Input: sequence, unchanged. Returns increasing-subsequence indices, not the values. Current comparison is strictly increasing.', '''vec<int> a={3,1,2,5};auto ids=lis(a);
 for(int i:ids)cout<<a[i]<<' '; // 1 2 5''')
 add('FastKnapsack.h','Input: nonnegative weights and target, copied. Returns maximum achievable sum <=target, not a subset reconstruction.', '''cout<<knapsack(vi{3,5,7},10); // 10''')
+add('DigitDP.h','Generic digit-DP recipe. Customize MAX_STATE, initial_state, boundary_return_val, lead_zero_state, lead_first_digit_state, next_state, and optional invalid_condition. State must determine all future transitions. count_valid(x) counts accepted numbers in [0,x], with the treatment of zero chosen by the boundary result; negative x returns zero. Count [L,R] by subtracting prefix counts. Memo is reset for each bound. The example adapter uses one state and counts positive integers.', '''// Customize all state placeholders first.
+long long L=1,R=100;
+cout<<count_valid(R)-count_valid(L-1);''',mode='adapt',setup='const int MAX_STATE=1,initial_state=0;',adapt={'boundary_return_val':'!is_lead','lead_zero_state':'0','lead_first_digit_state':'0','next_state':'0'})
 add('KnuthDP.h','This is a recurrence/optimization recipe, not a callable function. Store interval DP and optimal split positions; the answer is the full interval entry.', '''// For merging piles w={1,2,3}, initialize dp[i][i]=0.
 // cost(l,r)=sum(w[l..r]); try k from opt[l][r-1]
 // through opt[l+1][r], respecting l<=k<r.

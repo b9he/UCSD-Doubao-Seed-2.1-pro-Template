@@ -1,0 +1,21 @@
+% Local PDF glyphs preserve DigitDP's Chinese comments with pdflatex.
+% The mapping is scoped to this snippet by chapter.tex.
+\newcommand{\DigitDPCommentGlyph}[1]{\raisebox{-.1em}{\includegraphics[page=#1,height=1em]{content/tex/DigitDPCommentGlyphs.pdf}}}
+\lstset{extendedchars=false,literate=
+{^}{\caret}{1} {~}{\tilde}{1} {\{}{\nicelbrace}{1} {\}}{\nicerbrace}{1}
+{件}{{\DigitDPCommentGlyph{1}}}{2}
+{值}{{\DigitDPCommentGlyph{2}}}{2}
+{剪}{{\DigitDPCommentGlyph{3}}}{2}
+{回}{{\DigitDPCommentGlyph{4}}}{2}
+{常}{{\DigitDPCommentGlyph{5}}}{2}
+{或}{{\DigitDPCommentGlyph{6}}}{2}
+{是}{{\DigitDPCommentGlyph{7}}}{2}
+{条}{{\DigitDPCommentGlyph{8}}}{2}
+{枝}{{\DigitDPCommentGlyph{9}}}{2}
+{法}{{\DigitDPCommentGlyph{10}}}{2}
+{界}{{\DigitDPCommentGlyph{11}}}{2}
+{边}{{\DigitDPCommentGlyph{12}}}{2}
+{返}{{\DigitDPCommentGlyph{13}}}{2}
+{通}{{\DigitDPCommentGlyph{14}}}{2}
+{非}{{\DigitDPCommentGlyph{15}}}{2}
+}
