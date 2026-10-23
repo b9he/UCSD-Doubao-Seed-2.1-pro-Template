@@ -228,6 +228,7 @@ rep(i,0,3)rep(j,0,3)
  complement[i][j]=(i!=j&&!g[i][j]);
 Maxclique solver(complement);auto answer=solver.maxClique();
 cout<<answer.size(); // 2''',setup='#include "content/graph/MaximumClique.h"')
+add('KruskalReconstruction.h','One-based Kruskal reconstruction forest. Ascending edges give minimax thresholds and descending edges maximin thresholds. Set tot=n, clear ch before reuse, call kruskal, DFS all DSU roots, precompute(tot), then check find(u)==find(v) before val[get_lca(u,v)]. For u==v handle the leaf sentinel by the problem convention. MAXN>n. Shared global names: copy separately from BinaryLifting.h. Recursive find/DFS may use linear stack depth.','int n=3;vec<Edge>edges={{1,2,5},{2,3,8}};\ntot=n;kruskal(n,edges);\nfor(int i=1;i<=tot;i++)if(find(i)==i)dfs(i,0,1);\nprecompute(tot);cout<<val[get_lca(1,3)]; // 8')
 add('BinaryLifting.h','Input: one-based undirected tree in mp. Set MAXN>n and 2^LOGN>=n. dfs(root,0,1) fills dep and immediate parents; precompute(n) builds st; get_lca returns a vertex ID. Clear mp between cases; use HLD if memory is tight.', '''mp[1]={2,3};mp[2]={1,4};mp[3]={1};mp[4]={2};
 dfs(1,0,1);precompute(4);
 cout<<get_lca(4,3)<<' '<<get_lca(4,2); // 1 2''')
