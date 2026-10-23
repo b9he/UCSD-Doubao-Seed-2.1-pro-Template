@@ -191,45 +191,9 @@ add('FloydWarshall.h','Input/output: m is the distance matrix, overwritten with 
 floydWarshall(m);cout<<m[0][2]; // 5''')
 add('TopoSort.h','Input: directed adjacency list, unchanged. Returns a topological order; size<n means a cycle (only an acyclic prefix was returned).', '''vec<vi> g={{1},{2},{}};auto order=topoSort(g);
 if(sz(order)==sz(g))for(int v:order)cout<<v; // 012''')
-add('Dinic.h','', '''Dinic mf(3); // vertices 0..2
-mf.addEdge(0,1,4); // directed capacity 4
-mf.addEdge(1,2,3); // rcap=c: undirected
-cout<<mf.calc(0,2); // max flow 3; updates residuals
-auto &e=mf.adj[0][0]; // old mf.g[0][0]
-cout<<e.flow(); // positive net flow 3
-cout<<e.oc-e.c; // signed flow 3; old e.f
-cout<<e.to<<' '<<e.c; // destination 1, residual 1
-cout<<mf.leftOfMinCut(0); // 1: source side
-cout<<mf.leftOfMinCut(2); // 0: sink side
-rep(u,0,3)for(auto &e:mf.adj[u])
- if(e.oc>0&&mf.leftOfMinCut(u)&&!mf.leftOfMinCut(e.to))
-  cout<<u<<' '<<e.to; // original cut arc 1 2
-vec<unordered_map<int,ll>> cap(3); // former EK input
-cap[0][1]=4;cap[1][2]=3;Dinic net(3);
-rep(u,0,3)for(auto [v,c]:cap[u])net.addEdge(u,v,c);
-cout<<net.calc(0,2); // max flow 3
-for(auto &row:cap)row.clear(); // rebuild EK-style residual
-rep(u,0,3)for(auto &e:net.adj[u])
- if(e.c)cap[u][e.to]+=e.c;
-cout<<cap[0][1]; // residual capacity 1
-vec<vi> g={{0,1},{1}}; // left u -> right IDs g[u]
-vi btoa(2,-1); // one slot per right vertex
-cout<<dfsMatching(g,btoa); // size 2; g unchanged
-cout<<btoa[0]<<' '<<btoa[1]; // right -> left: 0 1
-vi rt(2,-1);
-cout<<hopcroftKarp(g,rt); // size 2, same API
-vi atob(sz(g),-1); // left -> right, -1 if unmatched
-rep(v,0,sz(btoa))if(btoa[v]!=-1)atob[btoa[v]]=v;
-vec<vi> h={{0},{0}};int n=2,m=1;
-auto cv=cover(h,n,m); // IDs: left u, right n+v
-for(int v:cv)cout<<v; // 2; any optimum is valid
-vi used(n+m);for(int v:cv)used[v]=1;
-rep(v,0,n+m)if(!used[v])cout<<v; // independent set: 0 1''')
-add('MinCostMaxFlow.h','Input: directed capacities/costs. maxflow changes flows/potentials and returns {total flow,total cost}. Call setpi(source) first for negative costs; no negative-cost cycles.', '''// Also include <bits/extc++.h> for the PBDS queue.
-MCMF mf(3);mf.addEdge(0,1,2,3);mf.addEdge(1,2,2,1);
-auto [flow,cost]=mf.maxflow(0,2);
-cout<<flow<<' '<<cost; // 2 8
-cout<<mf.ed[0][0].flow; // 2''',setup='#include <bits/extc++.h>')
+add('Dinic.h','Directed nonnegative capacities, distinct source/sink. n is the largest vertex ID; MAXN>n and MAXM includes both arc directions plus reserved slots. init_flow resets adjacency and vis. dinic returns additional max flow and mutates residual capacities. min_cut(source) then marks the source side in vis; reset vis before repeating that traversal. Independent snippet, do not combine global names with MinCostMaxFlow.',"init_flow(3);add_edge(1,2,4);add_edge(2,3,3);\ncout<<dinic(3,1,3); // 3\nmin_cut(1);cout<<vis[1]<<' '<<vis[3]; // 1 0")
+add('MinCostMaxFlow.h','Directed capacity/cost network with distinct source/sink. init_flow resets adjacency; add_edge adds a zero-capacity reverse arc with opposite cost. dinic returns {additional flow,additional cost}. Negative costs are allowed but reachable negative-cost residual cycles are unsupported; the cycle guard returns a partial result. n is the largest vertex ID. Independent snippet, separate from Dinic.',"init_flow(3);add_edge(1,2,2,3);add_edge(2,3,2,1);\nauto [flow,cost]=dinic(3,1,3);\ncout<<flow<<' '<<cost; // 2 8")
+add('DinicMatching.h','Input: g[left] contains right IDs in [0,m), btoa has m slots. Each call rebuilds and overwrites the global personal Dinic network. dfsMatching returns size and fills btoa[right]=left or -1. hopcroftKarp is an alias. cover returns left IDs u and right IDs n+v; its complement is a maximum independent set. g remains unchanged.',"vec<vi>g={{0,1},{1}};vi r(2,-1);\ncout<<dfsMatching(g,r); // 2\nauto cv=cover(g,2,2);vi used(4);\nfor(int v:cv)used[v]=1;\nrep(v,0,4)if(!used[v])cout<<v<<' '; // maximum independent set")
 add('GlobalMinCut.h','Input: symmetric nonnegative capacity matrix, copied. Returns {minimum cut weight, vertex IDs on one side}; requires at least two vertices.', '''vec<vi> m={{0,3,1},{3,0,2},{1,2,0}};
 auto [value,side]=globalMinCut(m);cout<<value; // 3
 for(int v:side)cout<<v<<' '; // cut-side vertices''')
@@ -475,25 +439,8 @@ cout<<dp[0][2]; // 9'''
 
 # Narrative belongs in Description; Usage keeps code and short result notes.
 DESCRIPTION_OVERRIDES=json.loads((ROOT/'docs/usage/descriptions.json').read_text())
-USAGE_OVERRIDES={'XorBasis.h': 'int n=3; // cin: 1 2 3\n// Paste fragment here.\n// output: 3', 'MoQueries.h': "auto ans=mo({{0,2},{1,3}});\ncout<<ans[0]<<' '<<ans[1]; // 5 8 for a={2,3,5}", 'SuffixTree.h': 'auto st=make_unique<SuffixTree>("aba");\nint child=st->t[0][\'a\'-\'a\'];\nif(child!=-1)cout<<st->a.substr(st->l[child],\n st->r[child]-st->l[child]); // root edge label', 'LinearRecurrence.h': 'cout<<linearRec({0,1},{1,1},8); // 21 % mod', 'SolveLinear2.h': 'vec<vd> A={{1,0}};vd b={2},x(2);\nint rank=solveLinear(A,b,x);\ncout<<x[0]; // 2; x[1] is undefined, rank=1', 'NumberTheoreticTransform.h': "vl a={1,2},b={3,4};auto c=conv(a,b);\nfor(ll x:c)cout<<x<<' '; // 3 10 8", 'ModInverse.h': 'const ll mod=7,LIM=7;\n// Paste fragment here.\ncout<<inv[3]; // 5, because 3*5=1 mod 7', 'ModSqrt.h': 'll r=sqrt(4LL,7LL);cout<<(r*r%7); // 4', 'BigInt.h': 'BigInt a(string("1000000000000000000")),b(7);\nBigInt c=a+b;cout<<c; // 1000000000000000007\ncout<<(a-b<a); // 1', 'Dinic.h': "Dinic f(3);f.addEdge(0,1,4);f.addEdge(1,2,3);\ncout<<f.calc(0,2); // 3\ncout<<f.adj[0][0].flow(); // 3\ncout<<f.leftOfMinCut(2); // 0\nvec<vi> g={{0,1},{1}};vi r(2,-1);\ncout<<dfsMatching(g,r); // 2\ncout<<r[0]<<' '<<r[1]; // 0 1\nauto cv=cover(g,2,2);\nfor(int v:cv)cout<<v; // 0 1\nvi used(4);for(int v:cv)used[v]=1;\nrep(v,0,4)if(!used[v])cout<<v; // 2 3", 'MinCostMaxFlow.h': "MCMF mf(3);mf.addEdge(0,1,2,3);mf.addEdge(1,2,2,1);\nauto [flow,cost]=mf.maxflow(0,2);\ncout<<flow<<' '<<cost; // 2 8\ncout<<mf.ed[0][0].flow; // 2", 'GeneralMatching.h': 'vec<pii> edges={{0,1},{2,3}};\nauto pairs=generalMatching(4,edges);\ncout<<pairs.size(); // 2', 'CentroidDecomposition.h': 'adj={{1},{0,2},{1}};\nis_removed.assign(3,false);subtree_size.resize(3);\nint c=get_centroid(0,get_subtree_size(0));cout<<c; // 1\nbuild_centroid_decomp();', 'sphericalDistance.h': 'double pi=acos(-1.0);\ncout<<sphericalDistance(0,pi/2,pi/2,pi/2,1);\n// pi/2', 'KnuthDP.h': 'll dp[3][3]={},pref[4]={0,1,3,6};\nfor(int len=2;len<=3;++len)for(int l=0;l+len<=3;++l){\n int r=l+len-1;dp[l][r]=LLONG_MAX;\n for(int k=l;k<r;++k)dp[l][r]=min(dp[l][r],\n  dp[l][k]+dp[k+1][r]+pref[r+1]-pref[l]);\n}\ncout<<dp[0][2]; // 9', 'DivideAndConquerDP.h': "DP solver;solver.solve(1,4);\ncout<<res[3].first<<' '<<res[3].second; // 2 1", 'BumpAllocator.h': 'int* p=new int(7);cout<<*p; // 7', 'BumpAllocatorSTL.h': 'vec<int,small<int>> a;a.push_back(7);\ncout<<a[0]; // 7', 'Random.h': "vec<int> v={1,2,3};int L=1,R=10,mod=7;\n// Paste fragment here.\ncout<<rand_val; // in [1,10]\nfor(int x:v)cout<<x<<' '; // shuffled permutation", 'Timer.h': 'int best=42;\ncout<<best; // 42'}
-USAGE_OVERRIDES['Dinic.h']="""// Max flow / min cut
-Dinic f(3);
-f.addEdge(0,1,4);f.addEdge(1,2,3);
-cout<<f.calc(0,2); // max flow: 3
-cout<<f.adj[0][0].flow(); // edge 0->1 flow: 3
-cout<<f.leftOfMinCut(0); // source side: 1
-cout<<f.leftOfMinCut(2); // source side: 0
+USAGE_OVERRIDES={'XorBasis.h': 'int n=3; // cin: 1 2 3\n// Paste fragment here.\n// output: 3', 'MoQueries.h': "auto ans=mo({{0,2},{1,3}});\ncout<<ans[0]<<' '<<ans[1]; // 5 8 for a={2,3,5}", 'SuffixTree.h': 'auto st=make_unique<SuffixTree>("aba");\nint child=st->t[0][\'a\'-\'a\'];\nif(child!=-1)cout<<st->a.substr(st->l[child],\n st->r[child]-st->l[child]); // root edge label', 'LinearRecurrence.h': 'cout<<linearRec({0,1},{1,1},8); // 21 % mod', 'SolveLinear2.h': 'vec<vd> A={{1,0}};vd b={2},x(2);\nint rank=solveLinear(A,b,x);\ncout<<x[0]; // 2; x[1] is undefined, rank=1', 'NumberTheoreticTransform.h': "vl a={1,2},b={3,4};auto c=conv(a,b);\nfor(ll x:c)cout<<x<<' '; // 3 10 8", 'ModInverse.h': 'const ll mod=7,LIM=7;\n// Paste fragment here.\ncout<<inv[3]; // 5, because 3*5=1 mod 7', 'ModSqrt.h': 'll r=sqrt(4LL,7LL);cout<<(r*r%7); // 4', 'BigInt.h': 'BigInt a(string("1000000000000000000")),b(7);\nBigInt c=a+b;cout<<c; // 1000000000000000007\ncout<<(a-b<a); // 1', 'Dinic.h': "init_flow(3);add_edge(1,2,4);add_edge(2,3,3);\ncout<<dinic(3,1,3); // 3\nmin_cut(1);cout<<vis[1]<<' '<<vis[3]; // 1 0", 'MinCostMaxFlow.h': "init_flow(3);add_edge(1,2,2,3);add_edge(2,3,2,1);\nauto [flow,cost]=dinic(3,1,3);\ncout<<flow<<' '<<cost; // 2 8", 'GeneralMatching.h': 'vec<pii> edges={{0,1},{2,3}};\nauto pairs=generalMatching(4,edges);\ncout<<pairs.size(); // 2', 'CentroidDecomposition.h': 'adj={{1},{0,2},{1}};\nis_removed.assign(3,false);subtree_size.resize(3);\nint c=get_centroid(0,get_subtree_size(0));cout<<c; // 1\nbuild_centroid_decomp();', 'sphericalDistance.h': 'double pi=acos(-1.0);\ncout<<sphericalDistance(0,pi/2,pi/2,pi/2,1);\n// pi/2', 'KnuthDP.h': 'll dp[3][3]={},pref[4]={0,1,3,6};\nfor(int len=2;len<=3;++len)for(int l=0;l+len<=3;++l){\n int r=l+len-1;dp[l][r]=LLONG_MAX;\n for(int k=l;k<r;++k)dp[l][r]=min(dp[l][r],\n  dp[l][k]+dp[k+1][r]+pref[r+1]-pref[l]);\n}\ncout<<dp[0][2]; // 9', 'DivideAndConquerDP.h': "DP solver;solver.solve(1,4);\ncout<<res[3].first<<' '<<res[3].second; // 2 1", 'BumpAllocator.h': 'int* p=new int(7);cout<<*p; // 7', 'BumpAllocatorSTL.h': 'vec<int,small<int>> a;a.push_back(7);\ncout<<a[0]; // 7', 'Random.h': "vec<int> v={1,2,3};int L=1,R=10,mod=7;\n// Paste fragment here.\ncout<<rand_val; // in [1,10]\nfor(int x:v)cout<<x<<' '; // shuffled permutation", 'Timer.h': 'int best=42;\ncout<<best; // 42'}
 
-// Bipartite matching: 2 left, 2 right
-vec<vi> g={{0,1},{1}};vi r(2,-1);
-cout<<dfsMatching(g,r); // size: 2
-cout<<r[0]<<' '<<r[1]; // right->left: 0 1
-
-// Minimum vertex cover / maximum independent set
-vi cv=cover(g,2,2);
-for(int v:cv)cout<<v<<' '; // cover: 0 1
-vi used(4);for(int v:cv)used[v]=1;
-rep(v,0,4)if(!used[v])cout<<v<<' '; // independent: 2 3"""
 USAGE_OVERRIDES['LazySegmentTree.h']="""vec<Info> a={Info(1),Info(5),Info(3)};
 LazySegmentTree<Info,Tag> st(a);
 st.modify(0,2,Tag{2}); // add 2 to [0,2)
